@@ -10,15 +10,26 @@
 </head>
 <body>
 <header>
+  <div class="top">
+    <p class="eyebrow">MICCAI 2026 · Open Access</p>
+    <button id="theme" type="button" class="iconbtn" aria-label="切換深淺色">◐</button>
+  </div>
   <h1>MICCAI 2026 論文索引</h1>
-  <p class="lede">__N__ 篇開放取用論文，依官方主題分類，附繁體中文摘要與全文連結。搜尋以 TF-IDF 向量的 cosine similarity 排序。</p>
+  <p class="lede">依官方主題分類，附繁體中文摘要與全文連結。搜尋以 TF-IDF 向量的 cosine similarity 排序。</p>
+  <dl class="stats">
+    <div><dt>開放取用論文</dt><dd>__N__</dd></div>
+    <div><dt>附程式碼</dt><dd id="stat-code">–</dd></div>
+    <div class="stat-zh"><dt>中文摘要</dt><dd id="stat-zh">–</dd><span class="meter"><span id="zh-bar"></span></span></div>
+  </dl>
+</header>
+<div class="searchbar">
   <div class="search">
+    <span class="search-icon" aria-hidden="true"></span>
     <input id="q" type="search" placeholder="輸入關鍵字，例如 colorectal surgery、手術影片、分割" autocomplete="off" aria-label="搜尋論文">
     <button id="toggle-facets" type="button">主題篩選</button>
-    <span id="progress"></span>
   </div>
   <p class="hint">中英文皆可。每篇的「找相似論文」會以該篇向量找出最接近的論文。</p>
-</header>
+</div>
 <div class="layout">
   <aside aria-label="主題篩選">
     <div class="aside-head"><h2>主題</h2><button id="clear" class="linkbtn" hidden>清除篩選</button></div>
@@ -26,10 +37,12 @@
   </aside>
   <main>
     <div id="status" aria-live="polite"></div>
+    <div id="active"></div>
     <div id="list"></div>
     <button id="more" hidden>顯示更多</button>
   </main>
 </div>
+<button id="totop" type="button" class="iconbtn" aria-label="回到頂端" hidden>↑</button>
 <script id="data" type="application/json">__DATA__</script>
 <script id="src-bundle" type="text/plain">__SRC__</script>
 <script>/*__JS__*/</script>

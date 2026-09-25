@@ -10,7 +10,10 @@
   ]));
   const facets = new M.Facets(papers);
   const all = papers.map((_, i) => i);
-  $("#progress").textContent = `中文摘要進度 ${Object.keys(summaries).length} / ${papers.length}`;
+  const nZh = Object.keys(summaries).length;
+  $("#stat-zh").textContent = `${nZh} / ${papers.length}`;
+  $("#zh-bar").style.width = `${(100 * nZh / papers.length).toFixed(1)}%`;
+  $("#stat-code").textContent = String(papers.filter((p) => p.code).length);
 
   let results = [];                           // [[index, score|null]]
   function compute() {
@@ -31,8 +34,10 @@
     const n = facets.selected.size;
     $("#clear").hidden = !n;
     const mode = state.simOf != null ? `與「${papers[state.simOf].title}」相似` : state.q.trim() ? `搜尋「${state.q.trim()}」` : "全部論文";
-    $("#status").replaceChildren(...[M.el("span", {}, `${mode}，共 ${results.length} 篇`),
+    $("#status").replaceChildren(...[M.el("span", { class: "mode" }, mode, M.el("b", {}, ` ${results.length} `), "篇"),
       state.simOf != null && M.el("button", { class: "linkbtn", onclick: () => { state.simOf = null; reset(); } }, "結束相似模式")].filter(Boolean));
+    $("#active").replaceChildren(...[...facets.selected.values()].flatMap((set) => [...set]).map((t) =>
+      M.el("button", { class: "chip on", title: "移除此篩選", onclick: () => { facets.toggle(t); reset(); } }, M.topicLabel(t), " ×")));
     $("#list").replaceChildren();
     renderMore(0);
   }
@@ -54,6 +59,14 @@
   const more = () => { const from = state.shown; state.shown += PAGE; renderMore(from); };
   $("#more").addEventListener("click", more);
   $("#toggle-facets").addEventListener("click", () => document.body.classList.toggle("facets-open"));
+  $("#theme").addEventListener("click", () => {
+    const root = document.documentElement;
+    const dark = root.dataset.theme ? root.dataset.theme === "dark" : matchMedia("(prefers-color-scheme: dark)").matches;
+    root.dataset.theme = dark ? "light" : "dark";
+  });
+  const totop = $("#totop");
+  totop.addEventListener("click", () => window.scrollTo({ top: 0, behavior: "smooth" }));
+  addEventListener("scroll", () => { totop.hidden = scrollY < 900; }, { passive: true });
   new IntersectionObserver((es) => { if (es[0].isIntersecting && !$("#more").hidden) more(); },
     { rootMargin: "600px" }).observe($("#more"));
   render();
